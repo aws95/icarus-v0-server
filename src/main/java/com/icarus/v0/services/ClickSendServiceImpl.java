@@ -28,9 +28,9 @@ public class ClickSendServiceImpl implements ClickSendService {
 	    SmsApi apiInstance = new SmsApi(defaultClient);
 
 	    SmsMessage smsMessage=new SmsMessage();
-	    smsMessage.body("Le taux de votre consommation énergétique quotidienne : " + consumption + " DT "+
-	    		"\nVous consommez une journée moyenne d'électricité de : " + use + " Kw "+
-	    		"\nSi vous utilisiez l'énergie solaire, vous auriez gagné la journée : " + gain + " DT");
+	    smsMessage.body("Le taux de votre consommation énergétique quotidienne : " + consumption + " DT/J "+
+	    		"\nVous consommez une journée moyenne d'électricité de : " + use + " Kw/J "+
+	    		"\nSi vous adpotez une solution d'énergie solaire à 100% aujourd'hui, vous gagnerez environ : " + gain + " DT/J");
 	    smsMessage.to(phone);
 
 	    List<SmsMessage> smsMessageList=Arrays.asList(smsMessage);

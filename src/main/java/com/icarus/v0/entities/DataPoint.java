@@ -15,7 +15,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-@Table(name = "data-point")
+@Table(name = "dataPoint")
 public class DataPoint {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

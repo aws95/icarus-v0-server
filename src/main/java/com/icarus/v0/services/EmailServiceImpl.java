@@ -17,11 +17,12 @@ public class EmailServiceImpl implements EmailService {
 		msg.setTo(email);
 		msg.setSubject("Vos statistiques solaires");
 		msg.setText(
-		"Le taux de votre consommation énergétique quotidienne : " + consumption + " DT "+
-		"\nVous consommez une journée moyenne d'électricité de : " + use + " Kw "+
-		"\nSi vous utilisiez l'énergie solaire, vous auriez gagné la journée : " + gain + " DT");
+		"Le taux de votre consommation énergétique quotidienne : " + consumption + " DT/J "+
+		"\nVous consommez une journée moyenne d'électricité de : " + use + " Kw/J "+
+		"\nSi vous adpotez une solution d'énergie solaire à 100% aujourd'hui, vous gagnerez environ : " + gain + " DT/J");
 		javaMailSender.send(msg);
 
 	}
 
 }
+

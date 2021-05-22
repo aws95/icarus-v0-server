@@ -1,6 +1,9 @@
 package com.icarus.v0.services;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Period;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,16 +94,27 @@ public class DataPointServiceImpl implements DataPointService {
 		Double a = (int) (dataPoint.getArea() / 1.63548) * 1.63548;
 		dataPoint.setEnergy(
 				a * 0.75 * 0.175 * ((response.getBody().getList().get(0).getRadiation().getGhi()) / 1000) * 24);
+
+		LocalDate currentdate = LocalDate.now();
+		LocalDate summerStart = LocalDate.of(currentdate.getYear(), Month.MAY, 1);
+		LocalDate summerFinish = LocalDate.of(currentdate.getYear(), Month.SEPTEMBER, 30);
+        Double consumption = dataPoint.getBillAmount() / 365;
+        
+		 if(currentdate.isAfter(summerStart) && currentdate.isBefore(summerFinish) ) 
+		 {
+			 consumption = consumption * 1.5;
+		 }
+
 		if (dataPoint.getEmail() != null) {
 			emailService.sendEmail(dataPoint.getEmail(),
-					String.valueOf(new DecimalFormat("##.##").format(dataPoint.getBillAmount() / 365 / 0.21)),
-					String.valueOf(new DecimalFormat("##.##").format(dataPoint.getBillAmount() / 365)),
+					String.valueOf(new DecimalFormat("##.##").format(consumption / 0.21)),
+					String.valueOf(new DecimalFormat("##.##").format(consumption)),
 					String.valueOf(new DecimalFormat("##.##").format(dataPoint.getEnergy() * 0.21)));
 		}
 		if (dataPoint.getPhone() != null) {
 			smsService.sendSms(dataPoint.getEmail(),
-					String.valueOf(new DecimalFormat("##.##").format(dataPoint.getBillAmount() / 365 / 0.21)),
-					String.valueOf(new DecimalFormat("##.##").format(dataPoint.getBillAmount() / 365)),
+					String.valueOf(new DecimalFormat("##.##").format(consumption / 0.21)),
+					String.valueOf(new DecimalFormat("##.##").format(consumption)),
 					String.valueOf(new DecimalFormat("##.##").format(dataPoint.getEnergy() * 0.21)),
 					dataPoint.getPhone());
 		}
