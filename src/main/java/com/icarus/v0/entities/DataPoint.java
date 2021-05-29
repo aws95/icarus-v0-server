@@ -70,7 +70,7 @@ public class DataPoint {
 	@NotBlank(message = "Your billing period is mandatory")
 	@Column(name = "period")
 	private String period;
-	
+
 	@NotBlank(message = "Roof Top area is mandatory")
 	@Column(name = "area")
 	private Double area;
@@ -85,7 +85,7 @@ public class DataPoint {
 
 	@Column(name = "energy")
 	private Double energy;
-	
+
 	public Double getEnergy() {
 		return energy;
 	}
@@ -102,24 +102,27 @@ public class DataPoint {
 
 	@Column(name = "ghi")
 	private String ghi;
-	
+
 	@Column(name = "dni")
 	private String dni;
-	
+
 	@Column(name = "dhi")
 	private String dhi;
-	
+
 	@Column(name = "ghi_cs")
 	private String ghi_cs;
-	
+
 	@Column(name = "dni_cs")
 	private String dni_cs;
-	
+
 	@Column(name = "dhi_cs")
 	private String dhi_cs;
-	
+
 	@Column(name = "dt")
 	private String dt;
+
+	@Column(name = "lang")
+	private String lang;
 
 	public DataPoint() {
 	}
@@ -129,7 +132,7 @@ public class DataPoint {
 			@NotBlank(message = "Your bill amount is mandatory") Double billAmount,
 			@NotBlank(message = "Your billing period is mandatory") String period,
 			@NotBlank(message = "Roof Top area is mandatory") Double area, Double energy, String phone, String email,
-			String ghi, String dni, String dhi, String ghi_cs, String dni_cs, String dhi_cs, String dt) {
+			String ghi, String dni, String dhi, String ghi_cs, String dni_cs, String dhi_cs, String dt, String lang) {
 		this.id = id;
 		this.country = country;
 		this.state = state;
@@ -147,6 +150,7 @@ public class DataPoint {
 		this.dni_cs = dni_cs;
 		this.dhi_cs = dhi_cs;
 		this.dt = dt;
+		this.lang = lang;
 	}
 
 	public String getGhi() {
@@ -245,15 +249,20 @@ public class DataPoint {
 		this.email = email;
 	}
 
+	public String getLang() {
+		return lang;
+	}
+
+	public void setLang(String lang) {
+		this.lang = lang;
+	}
+
 	@Override
 	public String toString() {
 		return "DataPoint [id=" + id + ", country=" + country + ", state=" + state + ", city=" + city + ", billAmount="
 				+ billAmount + ", period=" + period + ", area=" + area + ", energy=" + energy + ", phone=" + phone
 				+ ", email=" + email + ", ghi=" + ghi + ", dni=" + dni + ", dhi=" + dhi + ", ghi_cs=" + ghi_cs
-				+ ", dni_cs=" + dni_cs + ", dhi_cs=" + dhi_cs + ", dt=" + dt + "]";
+				+ ", dni_cs=" + dni_cs + ", dhi_cs=" + dhi_cs + ", dt=" + dt + ", lang=" + lang + "]";
 	}
-	
-
-
 
 }

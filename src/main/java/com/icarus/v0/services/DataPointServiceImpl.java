@@ -75,7 +75,16 @@ public class DataPointServiceImpl implements DataPointService {
 		if (!cityRepo.existsById(cityId)) {
 			throw new ResourceNotFoundException("City ID " + cityId + "not found");
 		}
-
+		/**
+		 * returns exact location by country / state and city of user
+		 * 
+		 * @param countryID - country id of user ==> for now we are only working in
+		 *                  Tunisia 217
+		 * @param stateId   - state id of user ==> for now we are only working with
+		 *                  Tunisian states
+		 * @param cityId    - city id of user ==> for now we are only working in
+		 *                  Tunisian cities
+		 */
 		final Country country = countryRepo.findById(countryId).get();
 		dataPoint.setCountry(country);
 		final State state = stateRepo.findById(stateId).get();
@@ -88,35 +97,72 @@ public class DataPointServiceImpl implements DataPointService {
 		uriVariables.put("lat", dataPoint.getCity().getLat());
 		uriVariables.put("lon", dataPoint.getCity().getLon());
 		uriVariables.put("API key", apiKey);
+		/*
+		 * returns response of Weather Maps API
+		 */
 		ResponseEntity<OpenWeatherResponse> response = restTemplate.getForEntity(URL, OpenWeatherResponse.class,
 				uriVariables);
+		/*
+		 * prints value of GHI returned from API response
+		 */
 		System.out.println(response.getBody().getList().get(0).getRadiation().getGhi());
+		/*
+		 * returns number of solar panels based of the area given by user (1.63548
+		 * standard solar panel area in square meters)
+		 */
 		Double a = (int) (dataPoint.getArea() / 1.63548) * 1.63548;
+		/*
+		 * setting the actual solar energy produced based of this equation E = A \* r \*
+		 * H \* PR E = Energy (kWh) A = Total solar panel Area (m2) r = solar panel
+		 * yield or efficiency(%) H = Annual average solar radiation on tilted panels
+		 * (shadings not included)
+		 * 
+		 * ==> To get the annual sum of radiation you have to take the annual average
+		 * (kwh/m2/day) and multiply it by 365 (days). For our example (London) the
+		 * annual horizontal global solar radiation is 2.79\*365=1018 kWh/m2 per year.
+		 * 
+		 * PR = Performance ratio, coefficient for losses (range between 0.5 and 0.9,
+		 * default value = 0.75)
+		 * 
+		 * - Inverter losses (4% to 10 %) - battery losses(10-15%) - Temperature losses
+		 * (5% to 20%) - DC cables losses (1 to 3 %) - AC cables losses (1 to 3 %) -
+		 * Shadings 0 % to 80% !!! (specific to each site) - Losses at weak radiation 3%
+		 * to 7% - Losses due to dust, snow... (2%) - Other Losses
+		 */
 		dataPoint.setEnergy(
 				a * 0.75 * 0.175 * ((response.getBody().getList().get(0).getRadiation().getGhi()) / 1000) * 24);
 
 		LocalDate currentdate = LocalDate.now();
 		LocalDate summerStart = LocalDate.of(currentdate.getYear(), Month.MAY, 1);
 		LocalDate summerFinish = LocalDate.of(currentdate.getYear(), Month.SEPTEMBER, 30);
-        Double consumption = dataPoint.getBillAmount() / 365;
-        
-		 if(currentdate.isAfter(summerStart) && currentdate.isBefore(summerFinish) ) 
-		 {
-			 consumption = consumption * 1.5;
-		 }
+		Double consumption = dataPoint.getBillAmount() / 365;
 
-		if (dataPoint.getEmail() != null) {
+		/*
+		 * adding summer consumption increase ratio based on date of user request
+		 */
+		if (currentdate.isAfter(summerStart) && currentdate.isBefore(summerFinish)) {
+			consumption = consumption * 1.5;
+		}
+
+		/*
+		 * send email if email is provided and if the API returns a non null value
+		 */
+		if (dataPoint.getEmail() != null && dataPoint.getEnergy() != 0.0) {
 			emailService.sendEmail(dataPoint.getEmail(),
 					String.valueOf(new DecimalFormat("##.##").format(consumption / 0.21)),
 					String.valueOf(new DecimalFormat("##.##").format(consumption)),
-					String.valueOf(new DecimalFormat("##.##").format(dataPoint.getEnergy() * 0.21)));
+					String.valueOf(new DecimalFormat("##.##").format(dataPoint.getEnergy() * 0.21)),
+					dataPoint.getLang());
 		}
-		if (dataPoint.getPhone() != null) {
+		/*
+		 * send sms if phone number is provided and if the API returns a non null value
+		 */
+		if (dataPoint.getPhone() != null && dataPoint.getEnergy() != 0.0) {
 			smsService.sendSms(dataPoint.getEmail(),
 					String.valueOf(new DecimalFormat("##.##").format(consumption / 0.21)),
 					String.valueOf(new DecimalFormat("##.##").format(consumption)),
 					String.valueOf(new DecimalFormat("##.##").format(dataPoint.getEnergy() * 0.21)),
-					dataPoint.getPhone());
+					dataPoint.getPhone(), dataPoint.getLang());
 		}
 		dataPointRepo.save(dataPoint);
 
