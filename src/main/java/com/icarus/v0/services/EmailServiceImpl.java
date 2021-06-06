@@ -32,7 +32,7 @@ public class EmailServiceImpl implements EmailService {
 			msg.setSubject("إحصاءات الطاقة الشمسية الخاصة بك");
 			msg.setText("معدل استهلاكك اليومي للطاقة : " + consumption + " دينار / يوم "
 					+ "\r\nتستهلك يوميًا متوسط ​​كمية كهرباء : " + use + " كيلووات / يوم "
-					+ "\r\nإذا كنت تستخدم الطاقة الشمسية بنسبة 100 في المائة ، فستكتسب اليوم : " + gain
+					+ "\r\nإذا كنت تستخدم الطاقة الشمسية بنسبة 100 في المائة ، فستكتسب : " + gain
 					+ " دينار / يوم");
 		}
 		javaMailSender.send(msg);

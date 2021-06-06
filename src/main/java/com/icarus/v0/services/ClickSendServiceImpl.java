@@ -41,7 +41,7 @@ public class ClickSendServiceImpl implements ClickSendService {
 		} else {
 			smsMessage.body("معدل استهلاكك اليومي للطاقة : " + consumption + " دينار / يوم "
 					+ "\r\nتستهلك يوميًا متوسط ​​كمية كهرباء : " + use + " كيلووات / يوم "
-					+ "\r\nإذا كنت تستخدم الطاقة الشمسية بنسبة 100 في المائة ، فستكتسب اليوم : " + gain
+					+ "\r\nإذا كنت تستخدم الطاقة الشمسية بنسبة 100 في المائة ، فستكتسب : " + gain
 					+ " دينار / يوم");
 		}
 		smsMessage.to(phone);
